@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bản đồ giá đất - GiáĐất.VN</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/map.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GiáĐất.VN</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="map.html"><i class="fas fa-map-marker-alt"></i> Bản đồ giá đất</a>
+          </li>
+        </ul>
+        <div class="d-flex" id="authButtons">
+          <a href="login.html" class="btn btn-primary">
+            <i class="fas fa-user"></i> Đăng nhập
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <style>
+    #map {
+      height: 600px;
+      width: 100%;
+      z-index: 1;
+    }
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+
+  <!-- Map Section -->
+  <!-- <div class="map-page">
+    <div class="search-container">
+      <div class="input-group">
+        <input type="text" id="search-input" class="form-control" placeholder="Nhập tên đường, số nhà...">
+        <button class="btn btn-primary" id="search-button"><i class="fas fa-search"></i></button>
+        <button class="btn btn-secondary" id="toggle-markers"><i class="fas fa-map-marker-alt"></i> Ẩn/Hiện Markers</button>
+      </div>
+      <div id="search-results" class="search-results"></div>
+    </div> -->
+
+    <!-- 🟢 Nút Hiện Bảng Tra Cứu (ẩn mặc định) -->
+    <button id="showSearchPanel" style="display: none;">Hiện Bảng Tra Cứu</button>
+
+    <!-- 🟢 Bảng tra cứu tích hợp đa chức năng (tối ưu hóa) -->
+    <div class="integrated-search">
+        <div class="integrated-search-header">
+            <h5>Tìm kiếm thông tin</h5>
+            <button id="closeSearch" class="close-btn">&times;</button>
+        </div>
+        
+        <div class="search-content">
+            <div class="mb-3">
+                <select id="searchModeSelect" class="form-select mb-2" onchange="switchSearchMode(this.value)">
+                    <option value="street">Tìm kiếm tuyến đường</option>
+                    <option value="coordinate">Tìm kiếm theo tọa độ</option>
+                </select>
+            </div>
+            
+            <!-- Tìm theo đường -->
+            <div id="streetSearch" class="search-section">
+                <select id="districtSelect" class="form-select mb-2">
+                    <option value="">Chọn quận</option>
+                    <option value="Quận 1">Quận 1</option>
+                    <option value="Quận 3">Quận 3</option>
+                    <option value="Quận 4">Quận 4</option>
+                    <option value="Quận 5">Quận 5</option>
+                    <option value="Quận 6">Quận 6</option>
+                    <option value="Quận 7">Quận 7</option>
+                    <option value="Quận 8">Quận 8</option>
+                    <option value="Quận 10">Quận 10</option>
+                    <option value="Quận 11">Quận 11</option>
+                    <option value="Quận 12">Quận 12</option>
+                </select>
+
+                <div class="input-group mb-2">
+                    <input type="text" id="searchBox" class="form-control" placeholder="Nhập tên đường...">
+                </div>
+
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="searchType" id="fullRoad" value="trond" checked>
+                    <label class="form-check-label" for="fullRoad">Trọn Đường</label>
+                </div>
+
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="radio" name="searchType" id="customRoad" value="custom">
+                    <label class="form-check-label" for="customRoad">Chọn Điểm Đầu - Điểm Cuối</label>
+                </div>
+
+                <div id="customSearchFields" style="display: none;">
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">Điểm đầu</span>
+                        <input type="text" id="startPoint" class="form-control" placeholder="Nhập điểm đầu...">
+                    </div>
+                    <div class="input-group mb-2">
+                        <span class="input-group-text">Điểm cuối</span>
+                        <input type="text" id="endPoint" class="form-control" placeholder="Nhập điểm cuối...">
+                    </div>
+                </div>
+
+                <button id="searchAddress" class="btn btn-primary w-100">Tìm kiếm</button>
+            </div>
+            
+            <!-- Tìm theo tọa độ -->
+            <div id="coordinateSearch" class="search-section" style="display: none;">
+                <div class="input-group mb-2">
+                    <span class="input-group-text">Vĩ độ</span>
+                    <input type="text" id="latitude" class="form-control" placeholder="Ví dụ: 10.7769">
+                </div>
+                <div class="input-group mb-2">
+                    <span class="input-group-text">Kinh độ</span>
+                    <input type="text" id="longitude" class="form-control" placeholder="Ví dụ: 106.7009">
+                </div>
+                <button id="searchCoordinates" class="btn btn-primary w-100">Tìm vị trí</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thêm nút tìm kiếm nhanh -->
+    <div class="quick-search-btn">
+        <button id="toggleSearch">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+
+    <!-- Thêm script để xử lý chuyển đổi mode tìm kiếm và ẩn/hiện bảng tìm kiếm -->
+    <script>
+    function switchSearchMode(mode) {
+        console.log("Switching to mode:", mode);
+        if (mode === 'street') {
+            document.getElementById('streetSearch').style.display = 'block';
+            document.getElementById('coordinateSearch').style.display = 'none';
+        } else if (mode === 'coordinate') {
+            document.getElementById('streetSearch').style.display = 'none';
+            document.getElementById('coordinateSearch').style.display = 'block';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Xử lý hiển thị/ẩn hộp tìm kiếm
+        const toggleButton = document.getElementById('toggleSearch');
+        const closeButton = document.getElementById('closeSearch');
+        const searchPanel = document.querySelector('.integrated-search');
+        
+        if (toggleButton) {
+            toggleButton.addEventListener('click', function() {
+                searchPanel.classList.add('active');
+            });
+        }
+        
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                searchPanel.classList.remove('active');
+            });
+        }
+    });
+    </script>
+
+    <div id="map" class="map-container"></div>
+    
+    <!-- Thêm panel hiển thị thông tin khi click -->
+    <div id="location-info" class="location-info-panel d-none">
+      <h4>Thông tin địa điểm</h4>
+      <div id="coordinate-info"></div>
+      <div id="street-info"></div>
+    </div>
+
+    <div id="price-info" class="price-info-panel d-none">
+      <h4 id="street-name"></h4>
+      <p id="segment-info"></p>
+      <h3 id="price-value"></h3>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay d-none">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h4>GiáĐất.VN</h4>
+          <p>Hệ thống tra cứu giá đất chính xác và cập nhật nhất cho các con đường và khu vực.</p>
+          <div class="social-links">
+            <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white me-2"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <h4>Liên kết</h4>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-white">Trang chủ</a></li>
+            <li><a href="map.html" class="text-white">Bản đồ giá đất</a></li>
+            <li><a href="#" class="text-white">Giới thiệu</a></li>
+            <li><a href="#" class="text-white">Liên hệ</a></li>
+            <li><a href="#" class="text-white">Điều khoản sử dụng</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <h4>Liên hệ</h4>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</li>
+            <li><i class="fas fa-phone me-2"></i> (028) 1234 5678</li>
+            <li><i class="fas fa-envelope me-2"></i> info@giadat.vn</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="text-center pt-3 border-top">
+        <p>&copy; <span id="current-year"></span> GiáĐất.VN. Tất cả quyền được bảo lưu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <!-- Data JS -->
+  <script src="data/sampleData_HienHanh.js"></script>
+  <!-- Custom JS -->
+  <!-- <script src="data/Bang_gia_dat.json"></script> -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/map.js"></script>
+</body>
+</html>

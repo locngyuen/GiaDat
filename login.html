@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập - GiáĐất.VN</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">GiáĐất.VN</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="map.html"><i class="fas fa-map-marker-alt"></i> Bản đồ giá đất</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Form -->
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <div class="login-form">
+          <h2 class="text-center mb-4">Đăng nhập</h2>
+          
+          <div id="loginError" class="alert alert-danger d-none" role="alert">
+            Tên đăng nhập hoặc mật khẩu không đúng
+          </div>
+          
+          <form id="loginForm">
+            <div class="mb-3">
+              <label for="username" class="form-label">Tên đăng nhập</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" id="username" required>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="password" class="form-label">Mật khẩu</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" class="form-control" id="password" required>
+              </div>
+            </div>
+            
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <h4>GiáĐất.VN</h4>
+          <p>Hệ thống tra cứu giá đất chính xác và cập nhật nhất cho các con đường và khu vực.</p>
+          <div class="social-links">
+            <a href="#" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white me-2"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <h4>Liên kết</h4>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-white">Trang chủ</a></li>
+            <li><a href="map.html" class="text-white">Bản đồ giá đất</a></li>
+            <li><a href="#" class="text-white">Giới thiệu</a></li>
+            <li><a href="#" class="text-white">Liên hệ</a></li>
+            <li><a href="#" class="text-white">Điều khoản sử dụng</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <h4>Liên hệ</h4>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-map-marker-alt me-2"></i> 123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</li>
+            <li><i class="fas fa-phone me-2"></i> (028) 1234 5678</li>
+            <li><i class="fas fa-envelope me-2"></i> info@giadat.vn</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="text-center pt-3 border-top">
+        <p>&copy; <span id="current-year"></span> GiáĐất.VN. Tất cả quyền được bảo lưu.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/auth.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('loginForm');
+      const loginError = document.getElementById('loginError');
+      
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        // Gọi hàm đăng nhập từ auth.js
+        const success = window.login(username, password);
+        
+        if (success) {
+          // Chuyển hướng đến trang quản trị hoặc trang chủ
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (user.role === 'admin' || user.role === 'editor') {
+            window.location.href = 'admin/dashboard.html';
+          } else {
+            window.location.href = 'index.html';
+          }
+        } else {
+          // Hiển thị thông báo lỗi
+          loginError.classList.remove('d-none');
+        }
+      });
+    });
+  </script>
+</body>
+</html> 
