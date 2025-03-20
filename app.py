@@ -1,7 +1,29 @@
-from flask import Flask, send_from_directory, render_template
+from flask import Flask, send_from_directory, render_template, jsonify, request
+from pymongo import MongoClient
+from config import MONGODB_URI, DATABASE_NAME
+import json
+import os
 
 app = Flask(__name__, static_folder='.', template_folder='.')
 # Đặt static_folder='.' để Flask có thể phục vụ files từ thư mục gốc
+
+# Kết nối MongoDB
+client = MongoClient(MONGODB_URI)
+db = client[DATABASE_NAME]
+
+# Khởi tạo collection
+properties_collection = db['properties']
+
+# Hàm để import dữ liệu từ file JSON vào MongoDB
+def import_data_to_mongodb():
+    data_file = os.path.join('data', 'data.json')
+    if os.path.exists(data_file):
+        with open(data_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            properties_collection.insert_many(data)
+
+# Import dữ liệu khi khởi động ứng dụng
+import_data_to_mongodb()
 
 @app.route('/')
 def index():
@@ -18,6 +40,24 @@ def serve_login():
 @app.route('/map.html')
 def serve_map():
     return render_template('map.html')
+
+@app.route('/api/search', methods=['GET'])
+def search_properties():
+    query = request.args.get('q', '')
+    if query:
+        # Tìm kiếm trong MongoDB
+        results = list(properties_collection.find({
+            "$or": [
+                {"address": {"$regex": query, "$options": "i"}},
+                {"district": {"$regex": query, "$options": "i"}},
+                {"ward": {"$regex": query, "$options": "i"}}
+            ]
+        }))
+        # Chuyển đổi ObjectId thành string
+        for result in results:
+            result['_id'] = str(result['_id'])
+        return jsonify(results)
+    return jsonify([])
 
 # Route để phục vụ các files tĩnh từ thư mục assets
 @app.route('/assets/<path:filename>')
