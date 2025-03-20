@@ -12,24 +12,24 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="assets/css/map.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/map.css">
 </head>
 <body>
   <!-- Header -->
   <header class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-      <a class="navbar-brand" href="index.html">GiáĐất.VN</a>
+      <a class="navbar-brand" href="/index.html">GiáĐất.VN</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
+            <a class="nav-link" href="/index.html"><i class="fas fa-home"></i> Trang chủ</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" href="map.html"><i class="fas fa-map-marker-alt"></i> Bản đồ giá đất</a>
+            <a class="nav-link active" href="/map.html"><i class="fas fa-map-marker-alt"></i> Bản đồ giá đất</a>
           </li>
         </ul>
         <div class="d-flex" id="authButtons">
@@ -105,21 +105,21 @@
 
                 <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" name="searchType" id="fullRoad" value="trond" checked>
-                    <label class="form-check-label" for="fullRoad">Trọn Đường</label>
+                    <!-- <label class="form-check-label" for="fullRoad">Trọn Đường</label> -->
                 </div>
 
                 <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" name="searchType" id="customRoad" value="custom">
-                    <label class="form-check-label" for="customRoad">Chọn Điểm Đầu - Điểm Cuối</label>
+                    <!-- <label class="form-check-label" for="customRoad">Chọn Điểm Đầu - Điểm Cuối</label> -->
                 </div>
 
                 <div id="customSearchFields" style="display: none;">
                     <div class="input-group mb-2">
-                        <span class="input-group-text">Điểm đầu</span>
+                        <!-- <span class="input-group-text">Điểm đầu</span> -->
                         <input type="text" id="startPoint" class="form-control" placeholder="Nhập điểm đầu...">
                     </div>
                     <div class="input-group mb-2">
-                        <span class="input-group-text">Điểm cuối</span>
+                        <!-- <span class="input-group-text">Điểm cuối</span> -->
                         <input type="text" id="endPoint" class="form-control" placeholder="Nhập điểm cuối...">
                     </div>
                 </div>
@@ -221,8 +221,8 @@
         <div class="col-md-4 mb-4">
           <h4>Liên kết</h4>
           <ul class="list-unstyled">
-            <li><a href="index.html" class="text-white">Trang chủ</a></li>
-            <li><a href="map.html" class="text-white">Bản đồ giá đất</a></li>
+            <li><a href="/index.html" class="text-white">Trang chủ</a></li>
+            <li><a href="/map.html" class="text-white">Bản đồ giá đất</a></li>
             <li><a href="#" class="text-white">Giới thiệu</a></li>
             <li><a href="#" class="text-white">Liên hệ</a></li>
             <li><a href="#" class="text-white">Điều khoản sử dụng</a></li>
@@ -250,11 +250,11 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
   <!-- Data JS -->
-  <script src="data/sampleData_HienHanh.js"></script>
+  <script src="/data/sampleData_HienHanh.js"></script>
   <!-- Custom JS -->
   <!-- <script src="data/Bang_gia_dat.json"></script> -->
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/auth.js"></script>
-  <script src="assets/js/map.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/auth.js"></script>
+  <script src="/assets/js/map.js"></script>
 </body>
 </html>
